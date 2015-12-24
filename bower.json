@@ -1,0 +1,21 @@
+{
+  "name": "project",
+  "homepage": "https://github.com/webRedFoX/start_new_project",
+  "authors": [
+    "Vladimir Paziuk <vladimir.paziuk@itrexgroup.com>"
+  ],
+  "description": "",
+  "main": "",
+  "moduleType": [],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "latest"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "name": "start_new_project",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/webRedFoX/start_new_project.git"
+  },
+  "author": "Vladimir Paziuk <vladimir.paziuk@itrexgroup.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/webRedFoX/start_new_project/issues"
+  },
+  "homepage": "https://github.com/webRedFoX/start_new_project#readme",
+  "devDependencies": {
+    "browser-sync": "^2.10.1",
+    "gulp": "^3.9.0",
+    "gulp-autoprefixer": "^3.1.0",
+    "gulp-notify": "^2.2.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-sass": "^2.1.1",
+    "gulp-uglify": "^1.5.1"
+  }
+}

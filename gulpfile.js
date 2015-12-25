@@ -10,7 +10,10 @@ var gulp = require('gulp'),
 
     notify = require('gulp-notify'),
     browserSync = require('browser-sync'),
-    reload = browserSync.reload;
+    reload = browserSync.reload,
+
+    del = require('del');
+
 
 
 // //////////////////////////////////////////////////
@@ -44,6 +47,7 @@ gulp.task('browser-sync', function(){
 });
 
 
+
 // //////////////////////////////////////////////////
 // Html Tasks
 // //////////////////////////////////////////////////
@@ -52,7 +56,6 @@ gulp.task('html', function(){
    gulp.src('app/**/*.html')
        .pipe(reload({stream: true}));
 });
-
 
 // //////////////////////////////////////////////////
 // Styles Tasks
@@ -67,7 +70,6 @@ gulp.task('styles', function(){
         .pipe(reload({stream: true}));
 });
 
-
 // //////////////////////////////////////////////////
 // Scripts Tasks
 // //////////////////////////////////////////////////
@@ -80,3 +82,39 @@ gulp.task('scripts', function () {
         .pipe(gulp.dest('app/js'))
         .pipe(reload({stream: true}));
 });
+
+
+
+// //////////////////////////////////////////////////
+// Build Tasks
+// //////////////////////////////////////////////////
+
+// Clear out all files and folders from build folder
+gulp.task('build:cleanfolder', function(cb){
+   del([
+       'build/**'
+   ], cb);
+});
+
+// Tasks to create build directory for all files
+gulp.task('build:copy', function(){
+    return gulp.src('app/**/*/')
+        .pipe(gulp.dest('build/'));
+});
+
+// Task to remove unwanted build files
+// List all files and directories here that you don't want to include
+gulp.task('build:remove', ['build:copy'], function(cb){
+    del([
+        'build/sass/'
+    ], cb);
+});
+
+// Build
+gulp.task('build',
+    [
+        'build:cleanfolder',
+        'build:copy',
+        'build:remove'
+    ]
+);

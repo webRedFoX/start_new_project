@@ -1,3 +1,2 @@
-$(document).ready(function () {
-    console.log('Scripts is ready');
-});
+
+console.log('Scripts is ready');

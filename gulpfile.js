@@ -6,12 +6,12 @@ var gulp           = require('gulp'),
     sass           = require('gulp-sass'),
     autoprefixer   = require('gulp-autoprefixer'),
     uglify         = require('gulp-uglify'),
+    rigger         = require('gulp-rigger'),
+    sourcemaps     = require('gulp-sourcemaps'),
     rename         = require('gulp-rename'),
-
     notify         = require('gulp-notify'),
     browserSync    = require('browser-sync'),
     reload         = browserSync.reload,
-
     del            = require('del');
 
 
@@ -19,8 +19,14 @@ var gulp           = require('gulp'),
 // Default Tasks
 // //////////////////////////////////////////////////
 
-gulp.task('default', ['browser-sync', 'watch']);
+gulp.task('default', ['assemble', 'watch']);
 
+gulp.task('assemble', [
+    'html',
+    'scripts',
+    'styles',
+    'browser-sync'
+]);
 
 // //////////////////////////////////////////////////
 // Watch Tasks
@@ -40,14 +46,6 @@ gulp.task('watch', function () {
 gulp.task('browser-sync', function(){
     browserSync({
         server: {
-            baseDir: './app/'
-        }
-    });
-});
-
-gulp.task('build:server', function(){
-    browserSync({
-        server: {
             baseDir: './build/'
         }
     });
@@ -59,7 +57,9 @@ gulp.task('build:server', function(){
 // //////////////////////////////////////////////////
 
 gulp.task('html', function(){
-   gulp.src('./app/**/*.html')
+   gulp.src('./app/*.html')
+       .pipe(rigger())
+       .pipe(gulp.dest('./build/'))
 
        .pipe(notify('HTML Done'))
        .pipe(reload({stream: true}));
@@ -71,9 +71,12 @@ gulp.task('html', function(){
 
 gulp.task('styles', function(){
     gulp.src('app/sass/styles.sass')
-        .pipe(sass().on('error', sass.logError))
+        .pipe(sourcemaps.init())
+        .pipe(sass({ outputStyle: 'compressed' }).on('error', sass.logError))
+        .pipe(rename({suffix: '.min'}))
         .pipe(autoprefixer())
-        .pipe(gulp.dest('./app/css'))
+        .pipe(sourcemaps.write())
+        .pipe(gulp.dest('./build/css'))
 
         .pipe(notify('CSS Done'))
         .pipe(reload({stream: true}));
@@ -84,11 +87,13 @@ gulp.task('styles', function(){
 // //////////////////////////////////////////////////
 
 gulp.task('scripts', function () {
-    // gulp.src(['app/js/**/*.js', '!app/js/**/*.min.js'])
     gulp.src('./app/js/common.js')
+        .pipe(rigger())
+        .pipe(sourcemaps.init())
         .pipe(uglify())
         .pipe(rename({suffix: '.min'}))
-        .pipe(gulp.dest('./app/js'))
+        .pipe(sourcemaps.write())
+        .pipe(gulp.dest('./build/js'))
 
         .pipe(notify('JavaScript Done'))
         .pipe(reload({stream: true}));
@@ -100,32 +105,20 @@ gulp.task('scripts', function () {
 // Build Tasks
 // //////////////////////////////////////////////////
 
-// Clear out all files and folders from build folder
-gulp.task('build:cleanfolder', function(cb){
-   del([
-       './build/**'
-   ], cb);
+gulp.task('build:cleanfolder', function(){
+    del(['./build/**']);
 });
 
-// Tasks to create build directory for all files
 gulp.task('build:copy', function(){
     return gulp.src('./app/**/*/')
         .pipe(gulp.dest('./build/'));
 });
 
-// Task to remove unwanted build files
-// List all files and directories here that you don't want to include
-gulp.task('build:remove', ['build:copy'], function(cb){
+gulp.task('build:remove', ['build:copy'], function(){
     del([
-        './build/sass/'
-    ], cb);
+        './build/sass/',
+        './build/templates/'
+    ]);
 });
 
-// Build App
-gulp.task('build',
-    [
-        'build:cleanfolder',
-        'build:copy',
-        'build:remove'
-    ]
-);
+gulp.task('build', ['build:cleanfolder', 'build:copy', 'build:remove']);
